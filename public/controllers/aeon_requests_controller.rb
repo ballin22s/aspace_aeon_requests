@@ -26,7 +26,7 @@ class RequestsController < ApplicationController
   private
 
   # generate aeon request url:
-  # [title, site, callnum, sublocation, itemvolume]
+  # [title, site, callnum, sublocation, volume]
   def build_aeon_request_url
     # hash for params required for aeon extracted from @request
     callnum = id_to_callnum
@@ -38,17 +38,18 @@ class RequestsController < ApplicationController
       site:    site,
       title:   title,
     }
-    params[:itemvolume]  = container_to_itemvolume if @request.container
+    params[:description] = @request.note if @request.note.length > 0
+    params[:volume]      = container_to_volume if @request.container
     params[:sublocation] = location_to_sublocation if @request.location_title
 
     URI::HTTPS.build(host: @endpoint, path: '/OpenURL', query: URI.encode_www_form(params))
   end
 
-  def container_to_itemvolume
-    barcode    = @request.barcode ? @request.barcode.shift : nil
-    itemvolume = @request.container ? @request.container.shift : nil
-    itemvolume = itemvolume.concat(", Barcode: #{barcode}") if barcode and itemvolume
-    itemvolume
+  def container_to_volume
+    barcode = @request.barcode ? @request.barcode.shift : nil
+    volume  = @request.container ? @request.container.shift : nil
+    volume  = volume.concat(", Barcode: #{barcode}") if barcode and volume
+    volume
   end
 
   def id_to_callnum
