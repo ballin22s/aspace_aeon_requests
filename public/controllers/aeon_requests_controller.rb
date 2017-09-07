@@ -14,8 +14,9 @@ class RequestsController < ApplicationController
     errs = @request.validate
     if errs.blank?
       # TODO: redirect_to build_aeon_request_url
-      flash[:notice] = build_aeon_request_url.to_s
-      $stdout.puts("\n\n\n#{build_aeon_request_url.to_s}\n\n\n")
+      aeon_request_url = build_aeon_request_url.to_s
+      flash[:notice] = aeon_request_url
+      $stdout.puts("\n\n\n#{aeon_request_url}\n\n\n")
       redirect_to params.fetch('base_url', request[:request_uri])
     else
       flash[:error] = errs
@@ -29,35 +30,50 @@ class RequestsController < ApplicationController
   # [title, site, callnum, sublocation, volume]
   def build_aeon_request_url
     # hash for params required for aeon extracted from @request
-    callnum = id_to_callnum
-    site    = site_lookup
-    title   = title_with_hierarchy
+    callnum     = id_to_callnum
+    description = note_to_description
+    site        = site_lookup
+    sublocation = locations_to_sublocation
+    title       = title_with_hierarchy
+    volume      = containers_to_volume
 
     params = {
       callnum: callnum,
       site:    site,
       title:   title,
     }
-    params[:description] = @request.note if @request.note.length > 0
-    params[:volume]      = container_to_volume if @request.container
-    params[:sublocation] = location_to_sublocation if @request.location_title
+    params[:description] = description unless description.empty?
+    params[:volume]      = volume unless volume.empty?
+    params[:sublocation] = sublocation unless sublocation.empty?
 
     URI::HTTPS.build(host: @endpoint, path: '/OpenURL', query: URI.encode_www_form(params))
   end
 
-  def container_to_volume
-    barcode = @request.barcode ? @request.barcode.shift : nil
-    volume  = @request.container ? @request.container.shift : nil
-    volume  = volume.concat(", Barcode: #{barcode}") if barcode and volume
-    volume
+  def containers_to_volume
+    volume = []
+    if @request.container.any?
+      @request.container.zip(@request.barcode).each do |container, barcode|
+        v = barcode.empty? ? container : "#{container}, Barcode: #{barcode}"
+        volume << v
+      end
+    end
+    volume.join(";")
   end
 
   def id_to_callnum
     @request.resource_id ? @request.resource_id : @request.identifier
   end
 
-  def location_to_sublocation
-    @request.location_title ? @request.location_title.shift : nil
+  def locations_to_sublocation
+    sublocation = ""
+    if @request.location_title.any?
+      sublocation = @request.location_title.join(";")
+    end
+    sublocation
+  end
+
+  def note_to_description
+    @request.note ? @request.note : ""
   end
 
   def site_lookup
