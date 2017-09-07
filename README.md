@@ -24,7 +24,7 @@ AppConfig[:aspace_aeon_requests_repo_map] = {
   'aspace_repo_1' => 'aeon_repo_1'
   'aspace_repo_2' => 'aeon_repo_2'
 }
-# use this to set a default aeon repository / site
+# [required] use this to set a default aeon repository / site
 # if mapping lookup is unmatched default site is used for the request
 AppConfig[:aspace_aeon_requests_repo_default] = "aeon_repo_1"
 

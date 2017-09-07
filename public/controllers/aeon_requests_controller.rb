@@ -60,12 +60,10 @@ class RequestsController < ApplicationController
   end
 
   def site_lookup
-    site = AppConfig[:aspace_aeon_requests_repo_map].fetch(
+    AppConfig[:aspace_aeon_requests_repo_map].fetch(
       @request.repo_code,
       AppConfig[:aspace_aeon_requests_repo_default]
     )
-    site = @request.repo_code unless site
-    site
   end
 
   def title_with_hierarchy
