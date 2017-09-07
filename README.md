@@ -18,6 +18,15 @@ Apply configuration in `config.rb`:
 ```
 AppConfig[:plugins] << 'aspace_aeon_requests'
 AppConfig[:aspace_aeon_requests_endpoint] = 'aeon.myinstitution.edu'
+# use this to map aspace repo_code to site identifier in aeon
+# (it determines the site parameter in the aeon request url)
+AppConfig[:aspace_aeon_requests_repo_map] = {
+  'aspace_repo_1' => 'aeon_repo_1'
+  'aspace_repo_2' => 'aeon_repo_2'
+}
+# use this to set a default aeon repository / site
+# if mapping lookup is unmatched default site is used for the request
+AppConfig[:aspace_aeon_requests_repo_default] = "aeon_repo_1"
 
 # you may want to edit these ArchivesSpace default settings:
 AppConfig[:pui_requests_permitted_for_types] = [

@@ -25,14 +25,20 @@ class RequestsController < ApplicationController
 
   private
 
-  # generate aeon request url: [title, site, callnum, sub_location, item_volume]
+  # generate aeon request url:
+  # [title, site, callnum, sub_location, item_volume]
   def build_aeon_request_url
     # hash for params required for aeon extracted from @request
     # TODO: move to config?
     callnum = @request.resource_id ? @request.resource_id : @request.identifier
+    site    = AppConfig[:aspace_aeon_requests_repo_map].fetch(
+      @request.repo_code,
+      AppConfig[:aspace_aeon_requests_repo_default]
+    )
+    site    = site ? site : @request.repo_code
     params  = {
       title:   @request.title,
-      site:    @request.repo_code,
+      site:    site,
       callnum: callnum,
     }
 
