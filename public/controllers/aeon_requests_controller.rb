@@ -29,38 +29,48 @@ class RequestsController < ApplicationController
   # [title, site, callnum, sublocation, itemvolume]
   def build_aeon_request_url
     # hash for params required for aeon extracted from @request
-    # TODO: move to config?
-    callnum = @request.resource_id ? @request.resource_id : @request.identifier
-    site    = AppConfig[:aspace_aeon_requests_repo_map].fetch(
-      @request.repo_code,
-      AppConfig[:aspace_aeon_requests_repo_default]
-    )
-    site  = @request.repo_code unless site
-    title = @request.hierarchy ? title_with_hierarchy : @request.title
+    callnum = id_to_callnum
+    site    = site_lookup
+    title   = title_with_hierarchy
 
     params = {
-      title:   title,
-      site:    site,
       callnum: callnum,
+      site:    site,
+      title:   title,
     }
-
-    if @request.container
-      barcode             = @request.barcode ? @request.barcode.shift : nil
-      itemvolume          = @request.container.shift
-      itemvolume          = itemvolume.concat(", Barcode: #{barcode}") if barcode
-      params[:itemvolume] = itemvolume
-    end
-
-    if @request.location_title
-      # TODO: parse and add to params
-      # params[:sublocation] =
-    end
+    params[:itemvolume]  = container_to_itemvolume if @request.container
+    params[:sublocation] = location_to_sublocation if @request.location_title
 
     URI::HTTPS.build(host: @endpoint, path: '/OpenURL', query: URI.encode_www_form(params))
   end
 
+  def container_to_itemvolume
+    barcode    = @request.barcode ? @request.barcode.shift : nil
+    itemvolume = @request.container ? @request.container.shift : nil
+    itemvolume = itemvolume.concat(", Barcode: #{barcode}") if barcode and itemvolume
+    itemvolume
+  end
+
+  def id_to_callnum
+    @request.resource_id ? @request.resource_id : @request.identifier
+  end
+
+  # TODO: implement
+  def location_to_sublocation
+    "PLACEHOLDER"
+  end
+
+  def site_lookup
+    site = AppConfig[:aspace_aeon_requests_repo_map].fetch(
+      @request.repo_code,
+      AppConfig[:aspace_aeon_requests_repo_default]
+    )
+    site = @request.repo_code unless site
+    site
+  end
+
   def title_with_hierarchy
-    @request.hierarchy.push(@request.title).join(",")
+    @request.hierarchy ? @request.hierarchy.push(@request.title).join(",") : @request.title
   end
 
 end
