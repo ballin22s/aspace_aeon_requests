@@ -94,7 +94,7 @@ With container (and location):
   :linked_record_uris=>nil,
   :machine=>nil,
   :top_container_url=>["/repositories/2/top_containers/1"],
-  :container=>["Box: 1 (Mixed Materials)"],
+  :container=>["Box: 1, Folder: 1 (Mixed Materials)"],
   :barcode=>["123456"],
   :location_title=>["Library, 1, Stacks, Y [Shelf: 1, Row: 2]"],
   :location_url=>["/locations/1"],
