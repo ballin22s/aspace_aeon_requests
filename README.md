@@ -15,7 +15,7 @@ For developers only:
 
 Apply configuration in `config.rb`:
 
-```
+```ruby
 AppConfig[:plugins] << 'aspace_aeon_requests'
 AppConfig[:aspace_aeon_requests_endpoint] = 'aeon.myinstitution.edu'
 # use this to map aspace repo_code to site identifier in aeon
