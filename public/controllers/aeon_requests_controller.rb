@@ -35,9 +35,11 @@ class RequestsController < ApplicationController
       @request.repo_code,
       AppConfig[:aspace_aeon_requests_repo_default]
     )
-    site    = site ? site : @request.repo_code
-    params  = {
-      title:   @request.title,
+    site  = @request.repo_code unless site
+    title = @request.hierarchy ? title_with_hierarchy : @request.title
+
+    params = {
+      title:   title,
       site:    site,
       callnum: callnum,
     }
@@ -47,8 +49,12 @@ class RequestsController < ApplicationController
       # params[:sub_location] = 
       # params[:item_volume]  =
     end
-    
+
     URI::HTTPS.build(host: @endpoint, path: '/OpenURL', query: URI.encode_www_form(params))
+  end
+
+  def title_with_hierarchy
+    @request.hierarchy.push(@request.title).join(",")
   end
 
 end
