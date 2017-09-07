@@ -55,9 +55,8 @@ class RequestsController < ApplicationController
     @request.resource_id ? @request.resource_id : @request.identifier
   end
 
-  # TODO: implement
   def location_to_sublocation
-    "PLACEHOLDER"
+    @request.location_title ? @request.location_title.shift : nil
   end
 
   def site_lookup
