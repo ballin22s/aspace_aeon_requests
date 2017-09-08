@@ -30,21 +30,21 @@ class RequestsController < ApplicationController
   # [title, site, callnum, sublocation, volume]
   def build_aeon_request_url
     # hash for params required for aeon extracted from @request
-    callnum     = id_to_callnum
-    description = note_to_description
-    site        = site_lookup
-    sublocation = locations_to_sublocation
-    title       = title_with_hierarchy
-    volume      = containers_to_volume
+    callnum        = id_to_callnum
+    site           = site_lookup
+    specialrequest = note_to_specialrequest
+    sublocation    = locations_to_sublocation
+    title          = title_with_hierarchy
+    volume         = containers_to_volume
 
     params = {
       callnum: callnum,
       site:    site,
       title:   title,
     }
-    params[:description] = description unless description.empty?
-    params[:volume]      = volume unless volume.empty?
-    params[:sublocation] = sublocation unless sublocation.empty?
+    params[:specialrequest] = specialrequest unless specialrequest.empty?
+    params[:sublocation]    = sublocation unless sublocation.empty?
+    params[:volume]         = volume unless volume.empty?
 
     URI::HTTPS.build(host: @endpoint, path: '/OpenURL', query: URI.encode_www_form(params))
   end
@@ -72,7 +72,7 @@ class RequestsController < ApplicationController
     sublocation
   end
 
-  def note_to_description
+  def note_to_specialrequest
     @request.note ? @request.note : ""
   end
 
