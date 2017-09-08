@@ -13,11 +13,10 @@ class RequestsController < ApplicationController
 
     errs = @request.validate
     if errs.blank?
-      # TODO: redirect_to build_aeon_request_url
+      # TODO: error handling
       aeon_request_url = build_aeon_request_url.to_s
-      flash[:notice] = aeon_request_url
       $stdout.puts("\n\n\n#{aeon_request_url}\n\n\n")
-      redirect_to params.fetch('base_url', request[:request_uri])
+      redirect_to aeon_request_url
     else
       flash[:error] = errs
       redirect_back(fallback_location: request[:request_uri]) and return
