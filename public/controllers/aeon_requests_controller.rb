@@ -50,7 +50,7 @@ class RequestsController < ApplicationController
 
   def containers_to_volume
     volume = []
-    if @request.container.any?
+    if @request.container and @request.container.any?
       @request.container.zip(@request.barcode).each do |container, barcode|
         v = barcode.empty? ? container : "#{container}, Barcode: #{barcode}"
         volume << v
@@ -65,7 +65,7 @@ class RequestsController < ApplicationController
 
   def locations_to_sublocation
     sublocation = ""
-    if @request.location_title.any?
+    if @request.location_title and @request.location_title.any?
       sublocation = @request.location_title.join(";")
     end
     sublocation
