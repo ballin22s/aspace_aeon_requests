@@ -1,15 +1,17 @@
 # check for required config settings
 [
-  :aspace_aeon_requests_endpoint,
-  :aspace_aeon_requests_repo_default,
+  { setting: :aspace_aeon_requests_endpoint, required: true },
+  { setting: :aspace_aeon_requests_repo_default, required: true },
+  { setting: :aspace_aeon_requests_repo_map, required: false },
+  { setting: :aspace_aeon_requests_params_transform, required: false },
 ].each do |config|
-  unless AppConfig.has_key? config
-    raise "Config variable #{config} is required!"
-  end
-end
+  required = config[:required]
+  setting  = config[:setting]
 
-unless AppConfig.has_key? :aspace_aeon_requests_repo_map
-  AppConfig[:aspace_aeon_requests_repo_map] = {}
+  if required and not AppConfig.has_key?(setting)
+    raise "Config variable #{setting} is required!"
+  end
+  AppConfig[setting] = {} unless AppConfig.has_key?(setting)
 end
 
 $stdout.puts "\n\n\nArchivesSpace Aeon requests plugin enabled =)\n\n\n"

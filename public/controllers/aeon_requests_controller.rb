@@ -45,6 +45,10 @@ class RequestsController < ApplicationController
     params[:sublocation]    = sublocation unless sublocation.empty?
     params[:volume]         = volume unless volume.empty?
 
+    AppConfig[:aspace_aeon_requests_params_transform].each do |param, transform|
+      params[param] = transform.call(params[param]) if params.has_key?(param)
+    end
+
     URI::HTTPS.build(host: @endpoint, path: '/OpenURL', query: URI.encode_www_form(params))
   end
 
