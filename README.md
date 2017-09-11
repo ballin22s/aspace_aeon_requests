@@ -105,4 +105,18 @@ With container (and location):
 
 The request data is mapped to Aeon url parameters.
 
+## Aeon request mapping
+
+The mapping is currently fixed but could be pushed into config later:
+
+```
+Aeon field name,Aeon openURL mapping,ArchivesSpace request property
+CallNumber,callnum,id|identifier
+Site,site,repo_code[mapped via config]
+SpecialRequest,specialrequest,note
+SubLocation,sublocation,location_title
+Title,title,title[with hierarchy]
+ItemVolume,volume,container[with barcode]
+```
+
 ---
