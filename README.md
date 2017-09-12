@@ -17,9 +17,9 @@ Apply configuration in `config.rb`:
 
 ```ruby
 AppConfig[:plugins] << 'aspace_aeon_requests'
+# [required] aeon hostname
 AppConfig[:aspace_aeon_requests_endpoint] = 'aeon.myinstitution.edu'
-# use this to map aspace repo_code to site identifier in aeon
-# (it determines the site parameter in the aeon request url)
+# [optional] map aspace repo_code to site identifier in aeon
 AppConfig[:aspace_aeon_requests_repo_map] = {
   'aspace_repo_1' => 'aeon_repo_1'
   'aspace_repo_2' => 'aeon_repo_2'
@@ -27,6 +27,12 @@ AppConfig[:aspace_aeon_requests_repo_map] = {
 # [required] use this to set a default aeon repository / site
 # if mapping lookup is unmatched default site is used for the request
 AppConfig[:aspace_aeon_requests_repo_default] = "aeon_repo_1"
+# [optional] cleanup aeon request params using a lambda to process
+AppConfig[:aspace_aeon_requests_params_transform] = {
+  volume: ->(param) {
+    param.split(";").map{ |s| s.gsub(/\(.*\)/, '').strip }
+  },
+}
 
 # you may want to edit these ArchivesSpace default settings:
 AppConfig[:pui_requests_permitted_for_types] = [
